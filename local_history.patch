@@ -1,0 +1,239 @@
+Index: src/test/java/api/specs/AuthSpec.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/test/java/api/specs/AuthSpec.java b/src/test/java/api/specs/AuthSpec.java
+new file mode 100644
+--- /dev/null	(date 1718723098682)
++++ b/src/test/java/api/specs/AuthSpec.java	(date 1718723098682)
+@@ -0,0 +1,27 @@
++package api.specs;
++
++import helpers.extensions.CustomAllureListener;
++import io.restassured.builder.ResponseSpecBuilder;
++import io.restassured.specification.RequestSpecification;
++import io.restassured.specification.ResponseSpecification;
++
++import static helpers.CustomAllureListener.withCustomTemplates;
++import static io.restassured.filter.log.LogDetail.STATUS;
++import static io.restassured.filter.log.RequestLoggingFilter.with;
++import static org.openqa.selenium.devtools.v115.runtime.model.SerializationOptions.Serialization.JSON;
++
++public class AuthSpec {
++
++    public static RequestSpecification AccountLoginRequestSpec = with()
++            .filter(withCustomTemplates)
++            .contentType(JSON)
++            .log().method()
++            .log().uri()
++            .log().body()
++            .basePath("/Account/v1/Login");
++
++    public static ResponseSpecification AccountLoginResponseSpec = new ResponseSpecBuilder()
++            .log(STATUS)
++            .expectStatusCode(200)
++            .build();
++}
+Index: src/test/java/api/specs/TestSpecs.java
+===================================================================
+diff --git a/src/test/java/api/specs/TestSpecs.java b/src/test/java/api/specs/TestSpecs.java
+deleted file mode 100644
+--- a/src/test/java/api/specs/TestSpecs.java	
++++ /dev/null	
+@@ -1,28 +0,0 @@
+-package api.specs;
+-
+-import helpers.extensions.CustomAllureListener;
+-import io.restassured.builder.ResponseSpecBuilder;
+-import io.restassured.specification.RequestSpecification;
+-import io.restassured.specification.ResponseSpecification;
+-
+-import static io.restassured.RestAssured.with;
+-import static io.restassured.filter.log.LogDetail.ALL;
+-import static io.restassured.http.ContentType.JSON;
+-
+-public class TestSpecs {
+-    public static RequestSpecification requestSpecification = with()
+-            .filter(CustomAllureListener.withCustomTemplates())
+-            .log().uri()
+-            .log().body()
+-            .log().headers()
+-            .contentType(JSON);
+-
+-    public static ResponseSpecification statusCodeResponseSpec(int statusCode) {
+-
+-        ResponseSpecification responseSpecification = new ResponseSpecBuilder()
+-                .expectStatusCode(statusCode)
+-                .log(ALL)
+-                .build();
+-        return responseSpecification;
+-    }
+-}
+Index: src/test/java/api/models/AuthResponseModel.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/test/java/api/models/AuthResponseModel.java b/src/test/java/api/models/AuthResponseModel.java
+--- a/src/test/java/api/models/AuthResponseModel.java	
++++ b/src/test/java/api/models/AuthResponseModel.java	(date 1718722823563)
+@@ -5,13 +5,12 @@
+ 
+ @Data
+ public class AuthResponseModel {
+-
+-    String userId;
+-    String username;
+-    String password;
+-    String token;
+-    String expires;
+     @JsonProperty("created_date")
+     String createdDate;
+-    Boolean isActive;
++    String expires;
++    String isActive;
++    String password;
++    String token;
++    String userId;
++    String username;
+ }
+Index: src/test/java/api/models/AuthRequestModel.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/test/java/api/models/AuthRequestModel.java b/src/test/java/api/models/AuthRequestModel.java
+--- a/src/test/java/api/models/AuthRequestModel.java	
++++ b/src/test/java/api/models/AuthRequestModel.java	(date 1718722732414)
+@@ -4,6 +4,6 @@
+ 
+ @Data
+ public class AuthRequestModel {
+-    String userName;
+-    String password;
++        String userName;
++        String password;
+ }
+Index: src/test/java/tests/TestData.java
+===================================================================
+diff --git a/src/test/java/tests/TestData.java b/src/test/java/tests/TestData.java
+deleted file mode 100644
+--- a/src/test/java/tests/TestData.java	
++++ /dev/null	
+@@ -1,12 +0,0 @@
+-package tests;
+-
+-import api.models.AuthRequestModel;
+-
+-import static com.codeborne.selenide.Selenide.$;
+-import static com.codeborne.selenide.Selenide.open;
+-
+-public class TestData {
+-
+-    public static String userName = "vupsen";
+-    public static String password = "Qwerty123!";
+-}
+Index: src/test/java/tests/TasteBase.java
+===================================================================
+diff --git a/src/test/java/tests/TasteBase.java b/src/test/java/tests/TasteBase.java
+deleted file mode 100644
+--- a/src/test/java/tests/TasteBase.java	
++++ /dev/null	
+@@ -1,22 +0,0 @@
+-package tests;
+-
+-import com.codeborne.selenide.Configuration;
+-import io.restassured.RestAssured;
+-import org.junit.jupiter.api.AfterEach;
+-import org.junit.jupiter.api.BeforeAll;
+-
+-import static com.codeborne.selenide.Selenide.closeWebDriver;
+-
+-
+-public class TasteBase {
+-    @BeforeAll
+-    static void setUp() {
+-        RestAssured.baseURI = "https://demoqa.com";
+-        Configuration.baseUrl =  "https://demoqa.com";
+-    }
+-
+-    @AfterEach
+-    void shutDown(){
+-        closeWebDriver();
+-    }
+-}
+Index: src/test/java/tests/LoginTests.java
+===================================================================
+diff --git a/src/test/java/tests/LoginTests.java b/src/test/java/tests/LoginTests.java
+deleted file mode 100644
+--- a/src/test/java/tests/LoginTests.java	
++++ /dev/null	
+@@ -1,44 +0,0 @@
+-package tests;
+-
+-import api.models.AuthRequestModel;
+-import api.models.AuthResponseModel;
+-import org.junit.jupiter.api.DisplayName;
+-import org.junit.jupiter.api.Test;
+-import org.openqa.selenium.Cookie;
+-import org.openqa.selenium.WebDriver;
+-
+-import static api.specs.TestSpecs.*;
+-import static com.codeborne.selenide.Selenide.open;
+-import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
+-import static io.qameta.allure.Allure.step;
+-import static io.restassured.RestAssured.given;
+-
+-
+-public class LoginTests extends TasteBase{
+-
+-    @Test
+-    @DisplayName("Успешная авторизация")
+-    void successfullyLoginTest(){
+-        AuthRequestModel authData = new AuthRequestModel();
+-
+-        step("Создать запрос", () -> {
+-            authData.setUserName(TestData.userName);
+-            authData.setPassword(TestData.password);
+-        });
+-
+-        AuthResponseModel response =
+-                given(requestSpecification)
+-                        .body(authData)
+-                        .when()
+-                        .post("/Account/v1/Login")
+-                        .then()
+-                        .spec(statusCodeResponseSpec(200))
+-                        .extract().as(AuthResponseModel.class);
+-
+-        open("/favicon.png");
+-        WebDriver.Options options = getWebDriver().manage();
+-        options.addCookie(new Cookie("userId", response.getUserId()));
+-        options.addCookie(new Cookie("expires", response.getExpires()));
+-        options.addCookie(new Cookie("token",response.getToken()));
+-    }
+-}
+Index: src/test/java/helpers/CustomAllureListener.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/test/java/helpers/CustomAllureListener.java b/src/test/java/helpers/CustomAllureListener.java
+new file mode 100644
+--- /dev/null	(date 1718723010656)
++++ b/src/test/java/helpers/CustomAllureListener.java	(date 1718723010656)
+@@ -0,0 +1,13 @@
++package helpers;
++
++import io.qameta.allure.restassured.AllureRestAssured;
++
++public class CustomAllureListener {
++    private static final AllureRestAssured FILTER = new AllureRestAssured();
++
++    public static AllureRestAssured withCustomTemplates() {
++        FILTER.setRequestTemplate("request.ftl");
++        FILTER.setResponseTemplate("response.ftl");
++        return FILTER;
++    }
++}
