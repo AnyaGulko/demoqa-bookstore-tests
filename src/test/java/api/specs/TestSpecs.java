@@ -18,11 +18,9 @@ public class TestSpecs {
             .contentType(JSON);
 
     public static ResponseSpecification statusCodeResponseSpec(int statusCode) {
-
-        ResponseSpecification responseSpecification = new ResponseSpecBuilder()
+        return new ResponseSpecBuilder()
                 .expectStatusCode(statusCode)
                 .log(ALL)
                 .build();
-        return responseSpecification;
     }
 }
