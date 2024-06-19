@@ -55,9 +55,3 @@ tasks.withType(Test) {
         }
     }
 }
-
-task registration_test(type: Test) {
-    useJUnitPlatform{
-        includeTags("delete_book_from_list")
-    }
-}
