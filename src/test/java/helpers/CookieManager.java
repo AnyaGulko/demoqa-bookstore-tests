@@ -11,7 +11,7 @@ import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 public class CookieManager {
     @Step("Установить Cookie")
     public static void setCookiesToWebDriver(AuthResponseModel authData) {
-        open("/favicon.ico");
+        open("/favicon.png");
         WebDriver.Options options = getWebDriver().manage();
         options.addCookie(new Cookie("userID", authData.getUserId()));
         options.addCookie(new Cookie("expires", authData.getExpires()));
