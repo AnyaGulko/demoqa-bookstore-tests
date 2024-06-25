@@ -3,8 +3,6 @@ package api;
 import api.models.AddBookRequestModel;
 import api.models.AuthResponseModel;
 import io.qameta.allure.Step;
-import io.restassured.http.ContentType;
-import tests.TestData;
 
 import java.util.List;
 

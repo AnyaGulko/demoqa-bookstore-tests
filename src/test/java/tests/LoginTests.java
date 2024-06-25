@@ -8,7 +8,7 @@ import io.qameta.allure.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import steps.ProfileSteps;
+import pages.ProfilePage;
 
 @Tag("delete_book_from_list")
 @Feature("Книги в профиле")
@@ -25,7 +25,7 @@ public class LoginTests extends TasteBase {
         BooksApi.addBook(response, TestData.gitPocketGuideIsbn);
         CookieManager.setCookiesToWebDriver(response);
 
-        ProfileSteps.openProfile()
+        ProfilePage.openProfile()
                 .checkUserName(TestData.userName)
                 .checkBookName(TestData.gitPocketGuideName)
                 .clickOnDeleteButton()
